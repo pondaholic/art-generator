@@ -1,22 +1,28 @@
 import React, { FC, useState } from 'react';
 import axios from 'axios';
+import ArtCard from './components/Card';
 
 //styling
 import './App.css';
 
+interface Art {
+	technique: string;
+	primaryimageurl: string;
+}
+
 const Painting: FC = () => {
-	const [paintings, setPaintings] = useState([]);
+	const number: number = Math.floor(Math.random() * 10);
+	const [painting, setPainting] = useState({} as Art);
 
 	const handleClick = () => {
 		const fetchPainting = async () => {
 			const results = await axios(
 				`https://api.harvardartmuseums.org/object?apikey=${process.env.REACT_APP_API_KEY}`
 			).then((res) => {
-				console.log(res.data);
-				return res.data.records;
+				return res.data.records[number];
 			});
 
-			setPaintings(results);
+			setPainting(results);
 		};
 		fetchPainting();
 	};
@@ -24,6 +30,12 @@ const Painting: FC = () => {
 	return (
 		<>
 			<button onClick={() => handleClick()}>Click</button>
+			{!!painting && (
+				<ArtCard
+					caption={painting.technique}
+					imageUrl={painting.primaryimageurl}
+				/>
+			)}
 		</>
 	);
 };
