@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { FC, useState } from 'react';
+import axios from 'axios';
+
+//styling
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const Painting: FC = () => {
+	const [paintings, setPaintings] = useState([]);
 
-export default App;
+	const handleClick = () => {
+		const fetchPainting = async () => {
+			const results = await axios(
+				`https://api.harvardartmuseums.org/object?apikey=${process.env.REACT_APP_API_KEY}`
+			).then((res) => {
+				console.log(res.data);
+				return res.data.records;
+			});
+
+			setPaintings(results);
+		};
+		fetchPainting();
+	};
+
+	return (
+		<>
+			<button onClick={() => handleClick()}>Click</button>
+		</>
+	);
+};
+
+export default Painting;
